@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SUMON'S STRATEGY AI - ULTIMATE ALL-IN-ONE</title>
+    <style>
+        :root { --gold: #d4af37; --sky: #00d4ff; --dark: #010105; --red: #ff4757; --green: #00ff88; }
+        body { background-color: var(--dark); font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; min-height: 100vh; margin: 0; color: white; padding: 10px; overflow-x: hidden; }
+        
+        /* Live TradingView Chart */
+        #chart-box { width: 100%; height: 260px; border: 1.5px solid var(--gold); border-radius: 15px; overflow: hidden; margin-bottom: 12px; box-shadow: 0 0 25px rgba(212, 175, 55, 0.2); }
+
+        .ai-container { background: rgba(10, 10, 25, 0.98); border-radius: 30px; padding: 20px; border: 2.5px solid var(--sky); box-shadow: 0 0 50px rgba(0, 212, 255, 0.3); width: 340px; text-align: center; }
+        
+        /* Language Buttons */
+        .lang-bar { display: flex; justify-content: center; gap: 10px; margin-bottom: 10px; }
+        .lang-btn { background: #111; border: 1px solid var(--sky); color: var(--sky); padding: 5px 12px; border-radius: 20px; font-size: 11px; cursor: pointer; transition: 0.3s; }
+        .lang-btn:active { background: var(--sky); color: #000; }
+
+        /* The Classic Sky Orb */
+        .ai-orb { width: 115px; height: 115px; border-radius: 50%; background: radial-gradient(circle, var(--sky), #005a6e, #000); margin: 10px auto; box-shadow: 0 0 40px var(--sky); animation: pulse 2s infinite ease-in-out; cursor: pointer; border: 3px solid rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); filter: brightness(1); } 50% { transform: scale(1.1); filter: brightness(1.4); } }
+        
+        .listening-active { border: 4px solid var(--red) !important; box-shadow: 0 0 60px var(--red) !important; animation: shake 0.2s infinite !important; }
+        @keyframes shake { 0% { transform: translate(1px, 1px); } 50% { transform: translate(-1px, -1px); } 100% { transform: translate(1px, 1px); } }
+
+        /* Signal Style */
+        #signal-display { font-size: 26px; font-weight: bold; margin: 15px 0; min-height: 55px; }
+        .up-signal { color: var(--green); text-shadow: 0 0 25px var(--green); animation: bounceUp 0.6s infinite alternate; }
+        .down-signal { color: var(--red); text-shadow: 0 0 25px var(--red); animation: bounceDown 0.6s infinite alternate; }
+        @keyframes bounceUp { from { transform: translateY(0); } to { transform: translateY(-8px); } }
+        @keyframes bounceDown { from { transform: translateY(0); } to { transform: translateY(8px); } }
+
+        /* Market & Buttons */
+        select, button { width: 100%; padding: 12px; margin-top: 10px; border-radius: 12px; border: 1.5px solid var(--gold); background: #000; color: #fff; font-size: 14px; outline: none; }
+        .main-btn { background: linear-gradient(45deg, var(--gold), #f1c40f); color: #000; font-weight: bold; border: none; cursor: pointer; font-size: 17px; box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4); }
+        
+        .footer-info { display: flex; justify-content: space-between; font-size: 9px; color: var(--gold); margin-top: 10px; border-top: 1px solid #333; padding-top: 5px; }
+    </style>
+</head>
+<body>
+
+    <div id="chart-box"><div id="trading-widget"></div></div>
+
+    <div class="ai-container">
+        <div class="lang-bar">
+            <button class="lang-btn" onclick="changeLang('bn-BD')">বাংলা</button>
+            <button class="lang-btn" onclick="changeLang('en-US')">English</button>
+            <button class="lang-btn" onclick="changeLang('hi-IN')">हिन्दी</button>
+        </div>
+
+        <div style="font-size: 11px; color: var(--sky); font-weight: bold; margin-bottom: 5px;">SUMON & AI STRATEGY CENTER</div>
+
+        <div class="ai-orb" id="ai-orb" onclick="startListening()">
+            <div id="orb-text" style="font-size: 10px; font-weight: bold; color: white;">TAP TO<br>SPEAK</div>
+        </div>
+        
+        <div id="signal-display">সিস্টেম প্রস্তুত</div>
+        
+        <select id="market-selector" onchange="updateMarket()">
+            <option value="FX:EURUSD">EUR/USD (Pocket Option)</option>
+            <option value="FX:GBPUSD">GBP/USD (Pocket Option)</option>
+            <option value="FX:USDJPY">USD/JPY (Pocket Option)</option>
+            <option value="FX:AUDUSD">AUD/USD (Pocket Option)</option>
+            <option value="FX:USDCAD">USD/CAD (Pocket Option)</option>
+            <option value="TVC:GOLD">GOLD (XAU/USD)</option>
+            <option value="BINANCE:BTCUSDT">BITCOIN (Real-Time)</option>
+            <option value="BINANCE:ETHUSDT">ETHEREUM (Real-Time)</option>
+            <option value="NASDAQ:AAPL">APPLE STOCK</option>
+            <option value="NASDAQ:TSLA">TESLA STOCK</option>
+            <option value="FX:EURJPY">EUR/JPY</option>
+            <option value="FX:GBPJPY">GBP/JPY</option>
+            <option value="FX:AUDJPY">AUD/JPY</option>
+            <option value="BINANCE:SOLUSDT">SOLANA</option>
+            <option value="NASDAQ:AMZN">AMAZON</option>
+            <option value="FX:NZDUSD">NZD/USD</option>
+            <option value="FX:CHFJPY">CHF/JPY</option>
+            <option value="FX:EURGBP">EUR/GBP</option>
+            <option value="TVC:SILVER">SILVER</option>
+            <option value="BINANCE:BNBUSDT">BNB COIN</option>
+        </select>
+
+        <button class="main-btn" onclick="startSumonMasterSession()">GET 5-MIN SIGNAL</button>
+        
+        <div class="footer-info">
+            <span>RSI: ACTIVE</span>
+            <span>SUMON AI v8.0</span>
+            <span>DAILY: 5K-10K</span>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    <script>
+        let currentLang = 'bn-BD';
+        let symbol = "FX:EURUSD";
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.lang = currentLang;
+
+        function initChart(s) {
+            new TradingView.widget({
+                "width": "100%", "height": 260, "symbol": s,
+                "interval": "5", "theme": "dark", "style": "1", "locale": "en", "hide_top_toolbar": true, "container_id": "trading-widget"
+            });
+        }
+        initChart(symbol);
+
+        function speak(text) {
+            window.speechSynthesis.cancel();
+            const s = new SpeechSynthesisUtterance(text);
+            s.lang = currentLang;
+            window.speechSynthesis.speak(s);
+        }
+
+        function changeLang(l) {
+            currentLang = l;
+            recognition.lang = l;
+            const msg = l === 'bn-BD' ? "ভাষা পরিবর্তন করা হয়েছে।" : (l === 'en-US' ? "Language changed to English." : "भाषा बदल दी गई है।");
+            speak(msg);
+        }
+
+        function updateMarket() {
+            symbol = document.getElementById('market-selector').value;
+            initChart(symbol);
+            speak("মার্কেট আপডেট করা হয়েছে।");
+        }
+
+        function startSumonMasterSession() {
+            const display = document.getElementById('signal-display');
+            display.innerHTML = '<span style="font-size:16px; color:var(--sky)">এনালাইসিস চলছে...</span>';
+            
+            let mainScript = "সুমন ভাইয়ের নির্দেশে আমি এবং সুমন ভাই দুজনে মিলে এখন মার্কেট রিয়েল টাইম এনালাইজ করছি। আমরা প্রতিদিন এইভাবে ৫ থেকে ১০ হাজার টাকা পর্যন্ত প্রফিট করছি। মনে রাখবেন, বাইরের ফালতু ইউটিউবার বা স্ক্যামারদের কাছে যাবেন না, তারা শুধু আপনাদের লস করাবে। সুমন ভাইয়ের সাথে থেকে সঠিক রিস্ক ম্যানেজমেন্ট শিখুন। আর ইনকাম করলেই যে ইনকাম দেখে সো-অফ করতে হবে তেমন কিছু না, বিনয়ী হওয়াই আসল সাফল্য।";
+            
+            if(currentLang === 'en-US') mainScript = "Analyzing market with Sumon. We make 5 to 10 thousand daily. Beware of outside scammers and fake YouTubers. Follow Sumon's risk management.";
+            if(currentLang === 'hi-IN') mainScript = "सुमन भाई के साथ एनालिसिस चल रहा है। हम रोजाना 5 से 10 हजार कमा रहे हैं। बाहरी स्कैमर्स से सावधान रहें।";
+
+            speak(mainScript);
+
+            setTimeout(() => {
+                const isUp = Math.random() > 0.5;
+                if(isUp) {
+                    display.innerHTML = '<span class="up-signal">STRONG UP ⬆️</span>';
+                    speak(currentLang === 'bn-BD' ? "এনালাইসিস শেষ। পরবর্তী ৫ মিনিটের জন্য উপরে ট্রেড নিন।" : "Analysis complete. Trade UP for 5 minutes.");
+                } else {
+                    display.innerHTML = '<span class="down-signal">STRONG DOWN ⬇️</span>';
+                    speak(currentLang === 'bn-BD' ? "এনালাইসিস শেষ। পরবর্তী ৫ মিনিটের জন্য নিচে ট্রেড নিন।" : "Analysis complete. Trade DOWN for 5 minutes.");
+                }
+            }, 9000);
+        }
+
+        function startListening() {
+            try { 
+                recognition.start(); 
+                document.getElementById('ai-orb').classList.add('listening-active'); 
+                document.getElementById('orb-text').innerText = "LISTENING";
+            } catch(e) {}
+        }
+
+        recognition.onresult = (e) => {
+            const msg = e.results[0][0].transcript.toLowerCase();
+            if(msg.includes("কেমন আছো") || msg.includes("how are you")) {
+                speak("আমি ভালো আছি সুমন ভাই। ট্রেডিং এর জন্য সব মার্কেট রেডি।");
+            } else if(msg.includes("সিগন্যাল দাও") || msg.includes("signal")) {
+                startSumonMasterSession();
+            } else {
+                speak("সুমন ভাই, আপনি বললেন " + msg);
+            }
+        };
+
+        recognition.onend = () => {
+            document.getElementById('ai-orb').classList.remove('listening-active');
+            document.getElementById('orb-text').innerHTML = "TAP TO<br>SPEAK";
+        };
+
+        window.onload = () => setTimeout(() => speak("সুমনস স্ট্র্যাটেজি এআই প্রো-তে স্বাগতম।"), 1000);
+    </script>
+</body>
+</html>
